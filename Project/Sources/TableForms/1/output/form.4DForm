@@ -1,0 +1,81 @@
+{
+	"$4d": {
+		"version": "1",
+		"kind": "form"
+	},
+	"windowSizingX": "variable",
+	"windowSizingY": "variable",
+	"windowMinWidth": 0,
+	"windowMinHeight": 0,
+	"windowMaxWidth": 32767,
+	"windowMaxHeight": 32767,
+	"rightMargin": 20,
+	"bottomMargin": 20,
+	"markerHeader": 30,
+	"markerBody": 60,
+	"events": [
+		"onLoad"
+	],
+	"windowTitle": "window title",
+	"destination": "listScreen",
+	"pages": [
+		{
+			"objects": {}
+		},
+		{
+			"objects": {
+				"Input": {
+					"type": "input",
+					"left": 41,
+					"top": 35,
+					"width": 86,
+					"height": 16,
+					"dataSource": "[Person:1]UUID:1"
+				},
+				"Input1": {
+					"type": "input",
+					"left": 137,
+					"top": 35,
+					"width": 86,
+					"height": 16,
+					"dataSource": "[Person:1]ID:2",
+					"dataSourceTypeHint": "integer"
+				},
+				"Input2": {
+					"type": "input",
+					"left": 237,
+					"top": 35,
+					"width": 86,
+					"height": 16,
+					"dataSource": "[Person:1]Name:3"
+				},
+				"Input3": {
+					"type": "input",
+					"left": 331,
+					"top": 35,
+					"width": 86,
+					"height": 16,
+					"dataSource": "[Person:1]Age:4",
+					"dataSourceTypeHint": "number"
+				},
+				"Input4": {
+					"type": "input",
+					"left": 437,
+					"top": 35,
+					"width": 86,
+					"height": 16,
+					"dataSource": "[Person:1]Flag:5",
+					"dataSourceTypeHint": "boolean"
+				}
+			}
+		}
+	],
+	"geometryStamp": 13,
+	"editor": {
+		"activeView": "View 1",
+		"defaultView": "View 1",
+		"views": {
+			"View 1": {}
+		}
+	}
+}

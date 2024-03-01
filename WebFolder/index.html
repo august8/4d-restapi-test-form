@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Person CRUD</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      form {
+        margin-bottom: 20px;
+        padding: 20px;
+        border: 1px solid #dddddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="checkbox"] {
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      input[type="checkbox"] {
+        width: auto;
+      }
+      button {
+        margin-right: 10px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 3px;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Person CRUD</h2>
+
+    <!-- フォーム -->
+    <form id="personForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required /><br />
+
+      <label for="age">Age:</label>
+      <input type="number" id="age" name="age" required /><br />
+
+      <label for="flag">Flag:</label>
+      <input type="checkbox" id="flag" name="flag" /><br />
+
+      <!-- 隠しフィールド -->
+      <input type="hidden" id="__KEY" name="__KEY" />
+      <input type="hidden" id="__STAMP" name="__STAMP" />
+      <input type="hidden" id="id" name="id" />
+
+      <!-- ボタン -->
+      <button type="button" onclick="createOrUpdatePerson()">Save</button>
+      <button type="button" onclick="deletePerson()">Delete</button>
+      <button type="button" onclick="clearForm()">Clear</button>
+    </form>
+
+    <!-- テーブル -->
+    <h2>Persons</h2>
+    <table id="personsTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Flag</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="personsData">
+        <!-- データはここに表示されます -->
+      </tbody>
+    </table>
+
+    <script>
+      const baseUrl = "http://localhost:80/rest/Persons";
+
+      // データを取得してテーブルに表示する関数
+      function fetchData() {
+        fetch(baseUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            const tableBody = document.getElementById("personsData");
+            tableBody.innerHTML = "";
+
+            data.__ENTITIES.forEach((person) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                            <td>${person.ID}</td>
+                            <td>${person.Name}</td>
+                            <td>${person.Age}</td>
+                            <td>${person.Flag ? "Yes" : "No"}</td>
+                            <td><button type="button" onclick="fillForm('${
+                              person.UUID
+                            }', ${person.ID}, '${person.Name}', ${
+                person.Age
+              }, ${person.Flag}, '${person.__KEY}', ${
+                person.__STAMP
+              })">Edit</button></td>
+                        `;
+              tableBody.appendChild(row);
+            });
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      }
+
+      // フォームをクリアする関数
+      function clearForm() {
+        document.getElementById("name").value = "";
+        document.getElementById("age").value = "";
+        document.getElementById("flag").checked = false;
+        document.getElementById("__KEY").value = "";
+        document.getElementById("__STAMP").value = "";
+        document.getElementById("id").value = "";
+      }
+
+      // フォームを指定されたデータで埋める関数
+      function fillForm(uuid, id, name, age, flag, key, stamp) {
+        document.getElementById("name").value = name;
+        document.getElementById("age").value = age;
+        document.getElementById("flag").checked = flag;
+        document.getElementById("__KEY").value = key;
+        document.getElementById("__STAMP").value = stamp;
+        document.getElementById("id").value = id;
+      }
+
+      // 新しいPersonを作成するか既存のPersonを更新する関数
+      function createOrUpdatePerson() {
+        const form = document.getElementById("personForm");
+        const formData = new FormData(form);
+
+        const method = formData.get("__KEY") ? "PUT" : "POST"; // __KEYがあるかで新規作成か更新かを判断
+        const url = formData.get("__KEY")
+          ? `${baseUrl}?$method=update`
+          : baseUrl;
+
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ID: parseInt(formData.get("id")),
+            Name: formData.get("name"),
+            Age: parseInt(formData.get("age")),
+            Flag: formData.get("flag") === "on" ? true : false,
+            __KEY: formData.get("__KEY"),
+            __STAMP: parseInt(formData.get("__STAMP")),
+          }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              fetchData(); // データを更新してテーブルをリロード
+              clearForm(); // フォームをクリア
+            } else {
+              throw new Error("Failed to create/update person");
+            }
+          })
+          .catch((error) =>
+            console.error("Error creating/updating person:", error)
+          );
+      }
+
+      // 指定されたPersonを削除する関数
+      function deletePerson() {
+        const uuid = document.getElementById("__KEY").value;
+
+        if (!uuid) {
+          console.error("UUID is missing");
+          return;
+        }
+
+        fetch(`${baseUrl}(${uuid})/?$method=delete`, {
+          method: "POST",
+        })
+          .then((response) => {
+            if (response.ok) {
+              fetchData(); // データを更新してテーブルをリロード
+              clearForm(); // フォームをクリア
+            } else {
+              throw new Error("Failed to delete person");
+            }
+          })
+          .catch((error) => console.error("Error deleting person:", error));
+      }
+
+      // 初期状態でデータを取得して表示
+      fetchData();
+    </script>
+  </body>
+</html>

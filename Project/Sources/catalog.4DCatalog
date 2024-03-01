@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE base SYSTEM "http://www.4d.com/dtd/2007/base.dtd" >
+<base name="REST API" uuid="A3565E8A43DD7340A5A34DB5707B8020" collation_locale="ja">
+	<schema name="DEFAULT_SCHEMA"/>
+	<table name="Persons" uuid="6E4F9B8C0D8CA44F8F12EE7E5ADD0164" id="1">
+		<field name="UUID" uuid="28B57A430DB26C41A23D4D012BA440CA" type="10" unique="true" autogenerate="true" store_as_UUID="true" not_null="true" id="1"/>
+		<field name="ID" uuid="0823061BAEC8E14BA205D1BCF7A4C4E4" type="5" autosequence="true" id="2"/>
+		<field name="Name" uuid="82E1611F9B871243BA2F3AF70B449A35" type="10" limiting_length="255" id="3"/>
+		<field name="Age" uuid="750511DEF7BDB84091F659654BFB9A37" type="3" id="4"/>
+		<field name="Flag" uuid="2FB227741960B647960D22D8075550D4" type="1" id="5"/>
+		<primary_key field_name="UUID" field_uuid="28B57A430DB26C41A23D4D012BA440CA"/>
+		<table_extra output_form="output" input_form="output">
+			<editor_table_info displayable_fields_count="10">
+				<color red="255" green="255" blue="255" alpha="0"/>
+				<coordinates left="40" top="40" width="136" height="253.33203125"/>
+			</editor_table_info>
+		</table_extra>
+	</table>
+	<index kind="regular" unique_keys="true" uuid="A6C3408CEFAC6C4B9519C798A487629B" type="7">
+		<field_ref uuid="28B57A430DB26C41A23D4D012BA440CA" name="UUID">
+			<table_ref uuid="6E4F9B8C0D8CA44F8F12EE7E5ADD0164" name="Persons"/>
+		</field_ref>
+	</index>
+	<base_extra>
+		<journal_file journal_file_enabled="true"/>
+	</base_extra>
+</base>
